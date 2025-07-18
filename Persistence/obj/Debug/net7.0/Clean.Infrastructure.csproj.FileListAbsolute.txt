@@ -1,0 +1,17 @@
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Infrastructure.deps.json
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Infrastructure.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Infrastructure.pdb
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Application.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Domain.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Application.pdb
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\bin\Debug\net7.0\Clean.Domain.pdb
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.csproj.AssemblyReference.cache
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.AssemblyInfoInputs.cache
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.AssemblyInfo.cs
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.csproj.CoreCompileInputs.cache
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\refint\Clean.Infrastructure.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.Infrastructure.pdb
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\ref\Clean.Infrastructure.dll
+F:\Project\Personal\Clean\Clean\Clean.Infrastructure\obj\Debug\net7.0\Clean.In.D3D4E96B.Up2Date

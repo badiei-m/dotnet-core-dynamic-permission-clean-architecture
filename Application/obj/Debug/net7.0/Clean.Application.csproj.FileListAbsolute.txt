@@ -1,0 +1,15 @@
+F:\Project\Personal\Clean\Clean\Clean.Application\bin\Debug\net7.0\Clean.Application.deps.json
+F:\Project\Personal\Clean\Clean\Clean.Application\bin\Debug\net7.0\Clean.Application.dll
+F:\Project\Personal\Clean\Clean\Clean.Application\bin\Debug\net7.0\Clean.Application.pdb
+F:\Project\Personal\Clean\Clean\Clean.Application\bin\Debug\net7.0\Clean.Domain.dll
+F:\Project\Personal\Clean\Clean\Clean.Application\bin\Debug\net7.0\Clean.Domain.pdb
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.csproj.AssemblyReference.cache
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.GeneratedMSBuildEditorConfig.editorconfig
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.AssemblyInfoInputs.cache
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.AssemblyInfo.cs
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.csproj.CoreCompileInputs.cache
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.dll
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\refint\Clean.Application.dll
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Application.pdb
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\ref\Clean.Application.dll
+F:\Project\Personal\Clean\Clean\Clean.Application\obj\Debug\net7.0\Clean.Ap.33428A71.Up2Date
