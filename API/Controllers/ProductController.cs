@@ -1,9 +1,11 @@
-﻿using Application.Interfaces;
+﻿using API.Authorization;
+using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
+    [MustHavePermission]
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
@@ -11,6 +13,7 @@ namespace API.Controllers
         public ProductController(IProductService service) => _service = service;
 
         [HttpGet]
+        
         public IActionResult Get() => Ok(_service.GetAll());
     }
 

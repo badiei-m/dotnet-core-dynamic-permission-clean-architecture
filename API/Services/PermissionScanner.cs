@@ -15,7 +15,9 @@ public class PermissionScanner : IPermissionScanner
         // Get all controllers in the executing assembly
         var controllerTypes = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(type => typeof(ControllerBase).IsAssignableFrom(type) && !type.IsAbstract);
+            .Where(type => typeof(ControllerBase).IsAssignableFrom(type) 
+                           && !type.IsAbstract 
+                           && !type.GetCustomAttributes(typeof(AllowAnonymousAttribute), true).Any());
 
         foreach (var controllerType in controllerTypes)
         {

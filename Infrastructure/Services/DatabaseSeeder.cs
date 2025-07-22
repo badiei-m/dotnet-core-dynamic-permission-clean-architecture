@@ -67,10 +67,28 @@ public class DatabaseSeeder(
     private async Task SeedAdminUserAsync()
     {
         const string adminUsername = "admin";
-        const string adminPassword = "Admin@123!"; // Use a secure password in production
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(adminPassword);
+        const string adminPassword = "yourPassword";
         
-        //var adminUser = await _userManager.FindByEmailAsync(adminEmail);
+        const string permissionTesterUsername = "permissionTester";
+        const string permissionTesterPassword = "yourPassword"; // Use a secure password in production
+        
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(adminPassword);
+        string hashedPermissionTesterPassword = BCrypt.Net.BCrypt.HashPassword(permissionTesterPassword);
+        
+        var permissionTesterUser = await context.Entity<User>()
+            .FirstOrDefaultAsync(x=>x.Username == permissionTesterUsername);
+
+        if (permissionTesterUser == null)
+        {
+            permissionTesterUser = new User
+            {
+                Username = permissionTesterUsername,
+                PasswordHash = hashedPermissionTesterPassword
+            };
+            context.Entity<User>().Add(permissionTesterUser);
+            await context.SaveChangesAsync();
+        }
+
         var adminUser = await context.Entity<User>()
             .FirstOrDefaultAsync(x=>x.Username == adminUsername);
         if (adminUser == null)
