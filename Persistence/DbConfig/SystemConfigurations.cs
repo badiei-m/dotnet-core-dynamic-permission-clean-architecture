@@ -12,12 +12,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasKey(x=>x.Id);
         
         builder.Property(x=>x.Id).HasColumnName("id").ValueGeneratedOnAdd();
-        builder.Property(x=>x.Username).HasColumnName("username");
-        builder.Property(x=>x.PasswordHash).HasColumnName("password_hash");
+        builder.Property(x=>x.UserName).HasColumnName("username").IsRequired();
+        builder.Property(x=>x.PasswordHash).HasColumnName("password_hash").IsRequired();
+        builder.Property(x=>x.Email).HasColumnName("email");
+        builder.Property(x=>x.DisplayName).HasColumnName("display_name");
 
-        builder.HasMany(x => x.UserRoles)
-            .WithOne(x => x.User)
-            .HasForeignKey(x => x.UserId);
+        builder.HasOne(x => x.UserRole)
+            .WithOne(x => x.User);
     }
 }
 
@@ -29,7 +30,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.HasKey(x=>x.Id);
         
         builder.Property(x=>x.Id).HasColumnName("id").ValueGeneratedOnAdd();
-        builder.Property(x=>x.Name).HasColumnName("name");
+        builder.Property(x=>x.Name).HasColumnName("name").IsRequired();
 
         builder.HasMany(x => x.RolePermissions)
             .WithOne(x => x.Role)
@@ -44,7 +45,7 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
         builder.HasKey(x=>x.Id);
         
         builder.Property(x=>x.Id).HasColumnName("id").ValueGeneratedOnAdd();
-        builder.Property(x=>x.Key).HasColumnName("key");
+        builder.Property(x=>x.Key).HasColumnName("key").IsRequired();
         builder.Property(x=>x.Description).HasColumnName("description");
         
         builder.HasMany(x=>x.RolePermissions)
@@ -59,16 +60,9 @@ public class RolePermissionConfiguration : IEntityTypeConfiguration<RolePermissi
         builder.ToTable("role_permission","System");
         builder.HasKey(x=> new {x.RoleId,x.PermissionId});
         
-        builder.Property(x=>x.RoleId).HasColumnName("role_id");
-        builder.Property(x=>x.PermissionId).HasColumnName("permission_id");
+        builder.Property(x=>x.RoleId).HasColumnName("role_id").IsRequired();
+        builder.Property(x=>x.PermissionId).HasColumnName("permission_id").IsRequired();
         
-        builder.HasOne(x=>x.Role)
-            .WithMany(x=>x.RolePermissions)
-            .HasForeignKey(x=>x.RoleId);
-        
-        builder.HasOne(x=>x.Permission)
-            .WithMany(x=>x.RolePermissions)
-            .HasForeignKey(x=>x.PermissionId);
     }
 }
 public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
@@ -78,16 +72,15 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         builder.ToTable("user_role","System");
         builder.HasKey(x=>new {x.RoleId, x.UserId});
         
-        builder.Property(x=>x.UserId).HasColumnName("user_id");
-        builder.Property(x=>x.RoleId).HasColumnName("role_id");
+        builder.Property(x=>x.UserId).HasColumnName("user_id").IsRequired();
+        builder.Property(x=>x.RoleId).HasColumnName("role_id").IsRequired();
         
         builder.HasOne(x=>x.Role)
             .WithMany(x=>x.UserRoles)
             .HasForeignKey(x=>x.RoleId);
         
         builder.HasOne(x=>x.User)
-            .WithMany(x=>x.UserRoles)
-            .HasForeignKey(x=>x.UserId);
+            .WithOne(x=>x.UserRole);
         
     }
 }

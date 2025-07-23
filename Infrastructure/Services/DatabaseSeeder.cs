@@ -23,6 +23,12 @@ public class DatabaseSeeder(
 
         // Seed admin user
         await SeedAdminUserAsync();
+        
+        // Seed Common role
+        await SeedCommonRoleAsync();
+        
+        //Seed Common User
+        await SeedCommonUserAsync();
 
         // Assign all permissions to admin role
         await AssignPermissionsToAdminRoleAsync();
@@ -64,39 +70,56 @@ public class DatabaseSeeder(
         }
     }
 
-    private async Task SeedAdminUserAsync()
+    private async Task SeedCommonRoleAsync()
     {
-        const string adminUsername = "admin";
-        const string adminPassword = "yourPassword";
-        
-        const string permissionTesterUsername = "permissionTester";
-        const string permissionTesterPassword = "yourPassword"; // Use a secure password in production
-        
-        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(adminPassword);
-        string hashedPermissionTesterPassword = BCrypt.Net.BCrypt.HashPassword(permissionTesterPassword);
+        const string adminRoleName = "Common";
+        if (!context.Entity<Role>().Any(r => r.Name == adminRoleName))
+        {
+            var adminRole = new Role { Name = adminRoleName };
+            context.Entity<Role>().Add(adminRole);
+            await context.SaveChangesAsync();
+        }
+    }
+
+    private async Task SeedCommonUserAsync()
+    {
+        const string username = "common";
+        const string password = "yourPassword";
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
         
         var permissionTesterUser = await context.Entity<User>()
-            .FirstOrDefaultAsync(x=>x.Username == permissionTesterUsername);
+            .FirstOrDefaultAsync(x=>x.UserName == username);
 
         if (permissionTesterUser == null)
         {
             permissionTesterUser = new User
             {
-                Username = permissionTesterUsername,
-                PasswordHash = hashedPermissionTesterPassword
+                UserName = username,
+                PasswordHash = hashedPassword,
+                Email = "common@test.com",
+                DisplayName = "Common User"
             };
             context.Entity<User>().Add(permissionTesterUser);
             await context.SaveChangesAsync();
         }
-
+    }
+    private async Task SeedAdminUserAsync()
+    {
+        const string adminUsername = "admin";
+        const string adminPassword = "yourPassword";
+        
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(adminPassword);
+        
         var adminUser = await context.Entity<User>()
-            .FirstOrDefaultAsync(x=>x.Username == adminUsername);
+            .FirstOrDefaultAsync(x=>x.UserName == adminUsername);
         if (adminUser == null)
         {
             adminUser = new User
             {
-                Username = adminUsername,
-                PasswordHash = hashedPassword
+                UserName = adminUsername,
+                PasswordHash = hashedPassword,
+                Email = "admin@test.com",
+                DisplayName = "Admin User"
             };
             context.Entity<User>().Add(adminUser);
             await context.SaveChangesAsync();
@@ -104,7 +127,7 @@ public class DatabaseSeeder(
             // Add to User table
             if (!context.Entity<User>().Any(u => u.Id == adminUser.Id))
             {
-                context.Entity<User>().Add(new User { Id = adminUser.Id, Username = adminUsername });
+                context.Entity<User>().Add(new User { Id = adminUser.Id, UserName = adminUsername });
                 await context.SaveChangesAsync();
             }
 

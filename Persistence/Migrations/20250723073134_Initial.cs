@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     key = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: false)
+                    description = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,6 +48,8 @@ namespace Persistence.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     username = table.Column<string>(type: "text", nullable: false),
+                    email = table.Column<string>(type: "text", nullable: true),
+                    display_name = table.Column<string>(type: "text", nullable: true),
                     password_hash = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -119,7 +121,8 @@ namespace Persistence.Migrations
                 name: "IX_user_role_user_id",
                 schema: "System",
                 table: "user_role",
-                column: "user_id");
+                column: "user_id",
+                unique: true);
         }
 
         /// <inheritdoc />

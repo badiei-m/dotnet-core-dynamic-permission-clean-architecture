@@ -10,14 +10,14 @@ public class TokenService(IConfiguration config)
 {
     public string CreateToken(User user )
     {
-        var userRoles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+        var userRole = user.UserRole.RoleId.ToString();
         
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, user.Username)
+            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.Role,userRole)
         };
-        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         var creds = new SigningCredentials(key , SecurityAlgorithms.HmacSha512Signature);
