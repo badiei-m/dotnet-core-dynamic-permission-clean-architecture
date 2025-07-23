@@ -7,14 +7,11 @@ namespace API.Controllers
     [ApiController]
     [MustHavePermission]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController(IProductService service) : ControllerBase
     {
-        private readonly IProductService _service;
-        public ProductController(IProductService service) => _service = service;
-
         [HttpGet]
         
-        public IActionResult Get() => Ok(_service.GetAll());
+        public IActionResult Get() => Ok(service.GetAll());
     }
 
 }

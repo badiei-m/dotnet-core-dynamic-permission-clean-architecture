@@ -47,7 +47,7 @@ var services = scope.ServiceProvider;
 // Seed database
 try
 {
-    var context = services.GetRequiredService<AppDbContext>();
+    //var context = services.GetRequiredService<AppDbContext>();
     //await context.Database.MigrateAsync();
     var seeder = services.GetRequiredService<IDatabaseSeeder>();
     await seeder.SeedAsync();
