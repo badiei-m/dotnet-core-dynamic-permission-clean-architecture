@@ -5,12 +5,12 @@ namespace InfraStructure.Services;
 
 public class PermissionAuthorizationService : IPermissionAuthorizationService
 {
-    private readonly IPermissionRepository _permissionRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMemoryCache _cache;
 
-    public PermissionAuthorizationService(IPermissionRepository permissionRepository, IMemoryCache cache)
+    public PermissionAuthorizationService(IUserRepository userRepository, IMemoryCache cache)
     {
-        _permissionRepository = permissionRepository;
+        _userRepository = userRepository;
         _cache = cache;
     }
 
@@ -19,7 +19,7 @@ public class PermissionAuthorizationService : IPermissionAuthorizationService
         var cacheKey = $"permissions_{userId}";
         if (!_cache.TryGetValue(cacheKey, out List<string> permissions))
         {
-            permissions = await _permissionRepository.GetUserPermissionsAsync(userId);
+            permissions = await _userRepository.GetUserPermissionsAsync(userId);
             _cache.Set(cacheKey, permissions, TimeSpan.FromMinutes(30));
         }
         return permissions.Contains(permission, StringComparer.OrdinalIgnoreCase);

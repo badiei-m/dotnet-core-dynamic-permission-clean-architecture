@@ -31,7 +31,10 @@ public class RoleConfiguration : IEntityTypeConfiguration<Role>
         
         builder.Property(x=>x.Id).HasColumnName("id").ValueGeneratedOnAdd();
         builder.Property(x=>x.Name).HasColumnName("name").IsRequired();
+        builder.Property(x=>x.ParentId).HasColumnName("parent_id");
 
+
+        builder.HasOne(x => x.Parent);
         builder.HasMany(x => x.RolePermissions)
             .WithOne(x => x.Role)
             .HasForeignKey(x => x.RoleId);
@@ -47,6 +50,9 @@ public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
         builder.Property(x=>x.Id).HasColumnName("id").ValueGeneratedOnAdd();
         builder.Property(x=>x.Key).HasColumnName("key").IsRequired();
         builder.Property(x=>x.Description).HasColumnName("description");
+        builder.Property(x=>x.ParentId).HasColumnName("parent_id");
+        
+        builder.HasOne(x => x.Parent);
         
         builder.HasMany(x=>x.RolePermissions)
             .WithOne(x=>x.Permission)

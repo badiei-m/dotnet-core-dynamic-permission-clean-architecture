@@ -1,6 +1,8 @@
-﻿namespace Application.Interfaces;
+﻿using Application.DTOs;
+
+namespace Application.Interfaces;
 
 public interface IPermissionScanner
 {
-    IEnumerable<string> GetPermissionNames();
+    IEnumerable<PermissionDto> GetPermissionNames();
 }
