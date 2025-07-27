@@ -5,7 +5,7 @@ using Persistence;
 
 namespace InfraStructure.Repositories;
 
-public class PermissionRepository(AppDbContext context) : IPermissionRepository
+public class UserRepository(AppDbContext context) : IUserRepository
 {
     public async Task<List<string>> GetUserPermissionsAsync(string userId)
     {
@@ -22,5 +22,5 @@ public class PermissionRepository(AppDbContext context) : IPermissionRepository
             .Distinct()
             .ToListAsync();
     }
-    
+
 }

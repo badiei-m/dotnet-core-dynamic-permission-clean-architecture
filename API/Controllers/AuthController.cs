@@ -9,11 +9,10 @@ using Persistence;
 namespace API.Controllers;
 
 [ApiController]
-[AllowAnonymous]
 [Route("api/[controller]/[action]")]
 public class AuthController(AppDbContext context,TokenService tokenService) : ControllerBase
 {
-    [HttpPost]
+    [HttpPost,AllowAnonymous]
     public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto request)
     {
         var user = await context.Entity<User>()
@@ -27,7 +26,7 @@ public class AuthController(AppDbContext context,TokenService tokenService) : Co
         return CreateUserObject(user);
     }
     
-    [HttpPost]
+    [HttpPost,AllowAnonymous]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if(await context.Entity<User>().AnyAsync(x=>x.UserName == registerDto.UserName))
@@ -65,6 +64,8 @@ public class AuthController(AppDbContext context,TokenService tokenService) : Co
 
         return CreateUserObject(user);
     }
+
+
     
     private UserDto CreateUserObject(User user)
     {

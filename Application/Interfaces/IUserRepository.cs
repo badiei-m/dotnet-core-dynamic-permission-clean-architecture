@@ -1,6 +1,6 @@
 ﻿namespace Application.Interfaces;
 
-public interface IPermissionRepository
+public interface IUserRepository
 {
     Task<List<string>> GetUserPermissionsAsync(string userId);
 }

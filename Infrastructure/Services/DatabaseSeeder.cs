@@ -12,44 +12,37 @@ public class DatabaseSeeder(
 {
     public async Task SeedAsync()
     {
-        // Ensure database is created
         await context.Database.EnsureCreatedAsync();
-
-        // Seed permissions from controllers
         await SeedPermissionsFromControllersAsync();
-
-        // Seed admin role
-        await SeedAdminRoleAsync();
-
-        // Seed admin user
+        var roleId = await SeedAdminRoleAsync();
         await SeedAdminUserAsync();
-        
-        // Seed Common role
-        await SeedCommonRoleAsync();
-        
-        //Seed Common User
-        await SeedCommonUserAsync();
-
-        // Assign all permissions to admin role
+        var commonRole = await SeedCommonRoleAsync(roleId);
+        await SeedCommonUserAsync(commonRole);
         await AssignPermissionsToAdminRoleAsync();
     }
 
     private async Task SeedPermissionsFromControllersAsync()
     {
-        var permissionNames = permissionScanner.GetPermissionNames();
+        var permissions = permissionScanner.GetPermissionNames();
         var permissionsToAdd = new List<Permission>();
 
-        foreach (var permissionName in permissionNames)
+        foreach (var item in permissions)
         {
-            if (!context.Entity<Permission>().Any(p => p.Key == permissionName))
+            if (context.Entity<Permission>().Any(p => p.Key == item.Permission)) continue;
+            Guid? parentId = null;
+            if (item.ParentPermission != null)
             {
-                permissionsToAdd.Add(new Permission
-                {
-                    Key = permissionName,
-                    Description =
-                        $"Permission to {permissionName.Split('.').Last()} {permissionName.Split('.').First()}"
-                });
+                var parent  = await context.Entity<Permission>()
+                    .FirstOrDefaultAsync(x => x.Key == item.ParentPermission);
+                parentId = parent.Id;
             }
+            permissionsToAdd.Add(new Permission
+            {
+                Key = item.Permission,
+                ParentId = parentId,
+                Description =
+                    $"Permission to {item.Permission.Split('.').Last()} {item.Permission.Split('.').First()}"
+            });
         }
 
         if (permissionsToAdd.Any())
@@ -59,32 +52,51 @@ public class DatabaseSeeder(
         }
     }
 
-    private async Task SeedAdminRoleAsync()
+    private async Task<Guid> SeedAdminRoleAsync()
     {
         const string adminRoleName = "Admin";
-        if (!context.Entity<Role>().Any(r => r.Name == adminRoleName))
+        var admin =await context.Entity<Role>().FirstOrDefaultAsync(r => r.Name == adminRoleName);
+        Guid roleId;
+        if (admin == null)
         {
             var adminRole = new Role { Name = adminRoleName };
             context.Entity<Role>().Add(adminRole);
             await context.SaveChangesAsync();
+            roleId = adminRole.Id;
         }
+        else
+            roleId = admin.Id;
+        
+        return roleId;
     }
 
-    private async Task SeedCommonRoleAsync()
+    private async Task<Guid> SeedCommonRoleAsync(Guid parentId)
     {
         const string adminRoleName = "Common";
-        if (!context.Entity<Role>().Any(r => r.Name == adminRoleName))
+        var admin =await context.Entity<Role>().FirstOrDefaultAsync(r => r.Name == adminRoleName);
+
+        Guid roleId;
+        if (admin == null)
         {
-            var adminRole = new Role { Name = adminRoleName };
+            var adminRole = new Role
+            {
+                Name = adminRoleName,
+                ParentId = parentId
+            };
             context.Entity<Role>().Add(adminRole);
             await context.SaveChangesAsync();
+            roleId = adminRole.Id;
         }
+        else
+            roleId = admin.Id;
+
+        return roleId;
     }
 
-    private async Task SeedCommonUserAsync()
+    private async Task SeedCommonUserAsync(Guid roleId)
     {
         const string username = "common";
-        const string password = "yourPassword";
+        const string password = "commonPassword";
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
         
         var permissionTesterUser = await context.Entity<User>()
@@ -101,12 +113,21 @@ public class DatabaseSeeder(
             };
             context.Entity<User>().Add(permissionTesterUser);
             await context.SaveChangesAsync();
+
+            var role = new UserRole
+            {
+                RoleId = roleId,
+                UserId = permissionTesterUser.Id
+            };
+            
+            context.Entity<UserRole>().Add(role);
+            await context.SaveChangesAsync();
         }
     }
     private async Task SeedAdminUserAsync()
     {
         const string adminUsername = "admin";
-        const string adminPassword = "yourPassword";
+        const string adminPassword = "Admin@123!";
         
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(adminPassword);
         
@@ -124,14 +145,12 @@ public class DatabaseSeeder(
             context.Entity<User>().Add(adminUser);
             await context.SaveChangesAsync();
 
-            // Add to User table
             if (!context.Entity<User>().Any(u => u.Id == adminUser.Id))
             {
                 context.Entity<User>().Add(new User { Id = adminUser.Id, UserName = adminUsername });
                 await context.SaveChangesAsync();
             }
 
-            // Assign to Admin role
             var adminRole = context.Entity<Role>().FirstOrDefault(r => r.Name == "Admin");
             if (adminRole != null &&
                 !context.Entity<UserRole>().Any(ur => ur.UserId == adminUser.Id && ur.RoleId == adminRole.Id))
@@ -156,7 +175,6 @@ public class DatabaseSeeder(
                 PermissionId = permission.Id
             });
         }
-
         await context.SaveChangesAsync();
     }
 }
