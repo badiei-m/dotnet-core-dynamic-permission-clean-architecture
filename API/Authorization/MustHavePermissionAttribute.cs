@@ -6,14 +6,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace API.Authorization;
 
-public class MustHavePermissionAttribute : AuthorizeAttribute, IAsyncAuthorizationFilter
+public class MustHavePermissionAttribute(string permission = null) : AuthorizeAttribute, IAsyncAuthorizationFilter
 {
-    public string Permission { get; }
-
-    public MustHavePermissionAttribute(string permission = null)
-    {
-        Permission = permission;
-    }
+    public string Permission { get; } = permission;
 
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
     {
