@@ -8,7 +8,7 @@ namespace API.Services;
 
 public class TokenService(IConfiguration config)
 {
-    public string CreateToken(User user )
+    public string CreateToken(User user)
     {
         var userRole = user.UserRole.RoleId.ToString();
         

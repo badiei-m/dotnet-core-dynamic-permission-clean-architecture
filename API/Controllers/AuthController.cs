@@ -1,4 +1,6 @@
-﻿using API.DTOs;
+﻿using System.Security.Claims;
+using API.Authorization;
+using API.DTOs;
 using API.Services;
 using Domain.Entities.System;
 using Microsoft.AspNetCore.Authorization;
@@ -9,6 +11,7 @@ using Persistence;
 namespace API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]/[action]")]
 public class AuthController(AppDbContext context,TokenService tokenService) : ControllerBase
 {
@@ -65,7 +68,15 @@ public class AuthController(AppDbContext context,TokenService tokenService) : Co
         return CreateUserObject(user);
     }
 
-
+    [HttpGet]
+    [MustHavePermission]
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
+    {
+        var user = await context.Entity<User>()
+            .Include(x=>x.UserRole)
+            .FirstOrDefaultAsync(c=>c.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
+        return CreateUserObject(user);
+    }
     
     private UserDto CreateUserObject(User user)
     {

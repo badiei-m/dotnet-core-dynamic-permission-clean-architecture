@@ -17,7 +17,16 @@ public static class ApplicationServiceExtensions
 
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(config.GetConnectionString("DefaultConnection")));
-
+        services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                    .WithOrigins("http://localhost:3000");
+            });
+        });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<IProductService, ProductService>();

@@ -20,7 +20,7 @@ public class SystemController(AppDbContext context) : ControllerBase
             .Select(r => new RoleTreeViewDto
             {
                 Id = r.Id,
-                Name = r.Name,
+                Title = r.Name,
                 Child = new List<RoleTreeViewDto>() 
             })
             .ToListAsync();
@@ -59,5 +59,37 @@ public class SystemController(AppDbContext context) : ControllerBase
         await context.SaveChangesAsync();
         
         return Ok(role.Id);
+    }
+    
+
+    [HttpGet]
+    public async Task<ActionResult<List<PermissionTreeViewDto>>> GetPermissions()
+    {
+        var permissions = await context.Entity<Permission>()
+            .AsNoTracking()
+            .Select(x=> new PermissionTreeViewDto
+            {
+                Id = x.Id,
+                Title = x.Key,
+                Child = new List<PermissionTreeViewDto>()
+            })
+            .ToListAsync();
+        
+        var permissionLookup = permissions.ToDictionary(r => r.Id, r => r);
+
+        foreach (var permission in permissions)
+        {
+            if (!permissionLookup.TryGetValue(permission.Id, out var currentRole)) continue;
+            var dbPermission = await context.Entity<Permission>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(r => r.Id == permission.Id);
+
+            if (dbPermission?.ParentId != null && permissionLookup.TryGetValue(dbPermission.ParentId.Value, out var parentRole))
+            {
+                parentRole.Child.Add(currentRole);
+            }
+        }
+        return permissions.Where(r => !context.Entity<Role>()
+            .Any(x => x.Id == r.Id && x.ParentId != null)).ToList();
     }
 }
