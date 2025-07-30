@@ -1,5 +1,7 @@
 ﻿using API.Services;
+using Application.Features.Role;
 using Application.Interfaces;
+using Cortex.Mediator.DependencyInjection;
 using InfraStructure.Repositories;
 using InfraStructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,6 @@ public static class ApplicationServiceExtensions
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
     {
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
@@ -27,6 +28,14 @@ public static class ApplicationServiceExtensions
                     .WithOrigins("http://localhost:3000");
             });
         });
+        services.AddCortexMediator(
+            configuration: config,
+            handlerAssemblyMarkerTypes: new[] { typeof(RoleListHandler) }, 
+            configure: options =>
+            {
+                options.AddDefaultBehaviors();
+            }
+        );
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddScoped<IProductService, ProductService>();
