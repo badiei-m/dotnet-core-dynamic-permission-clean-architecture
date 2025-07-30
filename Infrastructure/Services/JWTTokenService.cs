@@ -1,12 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.Interfaces;
 using Domain.Entities.System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace API.Services;
+namespace InfraStructure.Services;
 
-public class TokenService(IConfiguration config)
+public class JWTTokenService(IConfiguration config) : ITokenService
 {
     public string CreateToken(User user)
     {

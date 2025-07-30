@@ -3,7 +3,7 @@ using Cortex.Mediator.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Features.Role;
+namespace Application.Features.Auth.Role;
 public class RoleList : IQuery<Result<List<RoleTreeViewDto>>>
 {
 }

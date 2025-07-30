@@ -1,7 +1,7 @@
 ﻿using API.Authorization;
 using Application.Core;
-using Application.Features.Permission;
-using Application.Features.Role;
+using Application.Features.Auth.Permission;
+using Application.Features.Auth.Role;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
