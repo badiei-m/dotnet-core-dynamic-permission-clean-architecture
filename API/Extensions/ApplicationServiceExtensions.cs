@@ -1,5 +1,5 @@
 ﻿using API.Services;
-using Application.Features.Role;
+using Application.Features.Auth.Role;
 using Application.Interfaces;
 using Cortex.Mediator.DependencyInjection;
 using InfraStructure.Repositories;
@@ -43,7 +43,7 @@ public static class ApplicationServiceExtensions
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
         services.AddScoped<IPermissionScanner, PermissionScanner>();
-        services.AddScoped<TokenService>();
+        services.AddScoped<UserService>();
         services.AddMemoryCache();
         return services;
     }

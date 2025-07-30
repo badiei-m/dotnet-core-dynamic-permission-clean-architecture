@@ -1,90 +1,39 @@
-﻿using System.Security.Claims;
-using API.Authorization;
-using API.DTOs;
+﻿using API.Authorization;
 using API.Services;
-using Domain.Entities.System;
+using Application.Core;
+using Application.DTOs;
+using Application.Features.System.User;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers;
 
 [ApiController]
 [Authorize]
 [Route("api/[controller]/[action]")]
-public class AuthController(AppDbContext context,TokenService tokenService) : ControllerBase
+public class AuthController(UserService userService) :
+    BaseApiController
 {
     [HttpPost,AllowAnonymous]
-    public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto request)
+    public async Task<IActionResult> Login([FromBody] Login request)
     {
-        var user = await context.Entity<User>()
-            .Include(u => u.UserRole)
-            .ThenInclude(ur => ur.Role)
-            .FirstOrDefaultAsync(u => u.UserName == request.Username);
-
-        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            return Unauthorized("Invalid credentials");
-        
-        return CreateUserObject(user);
+        var userId = await Mediator.SendCommandAsync<Login, Result<UserDto>>(request);
+        return HandleResult(userId);
     }
     
     [HttpPost,AllowAnonymous]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserDto>> Register([FromBody]RegisterUser request)
     {
-        if(await context.Entity<User>().AnyAsync(x=>x.UserName == registerDto.UserName))
-        {
-            ModelState.AddModelError("username","Username is already taken");
-            return ValidationProblem();
-        }
-
-        if(await context.Entity<User>().AnyAsync(x=>x.Email == registerDto.Email))
-        {
-            ModelState.AddModelError("email","Email is already taken");
-            return ValidationProblem();
-        }
-        var passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
-        var user = new User
-        {
-            Email = registerDto.Email,
-            UserName = registerDto.UserName,
-            DisplayName = registerDto.DisplayName,
-            PasswordHash = passwordHash
-        };
-        context.Entity<User>().Add(user);
-        await context.SaveChangesAsync();
-
-        var commonRole = await context.Entity<Role>().FirstOrDefaultAsync(x => x.Name == "Common");
-
-        if (commonRole == null) return CreateUserObject(user);
-        var role = new UserRole
-        {
-            RoleId = commonRole.Id,
-            UserId = user.Id
-        };
-        context.Entity<UserRole>().Add(role);
-        await context.SaveChangesAsync();
-
-        return CreateUserObject(user);
+        var user = await Mediator.SendCommandAsync<RegisterUser, Result<UserDto>>(request);
+        return HandleResult(user);
     }
 
-    [HttpGet]
-    [MustHavePermission]
+    [HttpGet,MustHavePermission]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var user = await context.Entity<User>()
-            .Include(x=>x.UserRole)
-            .FirstOrDefaultAsync(c=>c.Id.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier));
-        return CreateUserObject(user);
-    }
-    
-    private UserDto CreateUserObject(User user)
-    {
-        return new UserDto
-        {
-            Username = user.UserName,
-            Token = tokenService.CreateToken(user)
-        };
+        var userId = userService.GetCurrentUserId();
+        var user = await Mediator.SendQueryAsync<GetCurrentUser, Result<UserDto>>(new GetCurrentUser{UserId = userId});
+        return HandleResult(user);
     }
 }
 

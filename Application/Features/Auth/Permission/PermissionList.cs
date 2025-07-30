@@ -3,7 +3,7 @@ using Cortex.Mediator.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Features.Permission;
+namespace Application.Features.Auth.Permission;
 
 public class PermissionList : IQuery<Result<List<PermissionTreeViewDto>>>
 {
