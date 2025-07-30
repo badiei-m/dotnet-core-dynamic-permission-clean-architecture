@@ -1,17 +1,16 @@
-﻿using Cortex.Mediator.Queries;
+﻿using Application.Core;
+using Cortex.Mediator.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Features.Role;
-
-
-public class RoleList : IQuery<List<RoleTreeViewDto>>
+public class RoleList : IQuery<Result<List<RoleTreeViewDto>>>
 {
 }
 
-public class RoleListHandler(AppDbContext context) : IQueryHandler<RoleList,List<RoleTreeViewDto>>
+public class RoleListHandler(AppDbContext context) : IQueryHandler<RoleList,Result<List<RoleTreeViewDto>>>
 {
-    public async Task<List<RoleTreeViewDto>> Handle(RoleList command, CancellationToken cancellationToken)
+    public async Task<Result<List<RoleTreeViewDto>>> Handle(RoleList command, CancellationToken cancellationToken)
     {
         var roles = await context.Entity<Domain.Entities.System.Role>()
             .AsNoTracking()
@@ -37,7 +36,13 @@ public class RoleListHandler(AppDbContext context) : IQueryHandler<RoleList,List
                 parentRole.ChildList.Add(currentRole);
             }
         }
-        return roles.Where(r => !context.Entity<Domain.Entities.System.Role>().Any(dbRole => dbRole.Id == r.Id && dbRole.ParentId != null)).ToList();    }
+        var result = roles
+            .Where(r => 
+                !context.Entity<Domain.Entities.System.Role>()
+                    .Any(dbRole => dbRole.Id == r.Id && dbRole.ParentId != null))
+            .ToList();
+        return Result<List<RoleTreeViewDto>>.Success(result);
+    }
 }
 
 public class RoleTreeViewDto
