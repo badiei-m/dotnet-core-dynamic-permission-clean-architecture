@@ -1,23 +1,24 @@
-﻿using Cortex.Mediator.Commands;
+﻿using Application.Core;
+using Cortex.Mediator.Commands;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Features.Role;
 
-public class RegisterRole : ICommand<Guid?>
+public class RegisterRole : ICommand<Result<Guid?>>
 {
     public string Name { get; set; }
     public string Parent { get; set; }
 }
 
-public class RegisterRoleHandler(AppDbContext context) : ICommandHandler<RegisterRole, Guid?>
+public class RegisterRoleHandler(AppDbContext context) : ICommandHandler<RegisterRole, Result<Guid?>>
 {
-    public async Task<Guid?> Handle(RegisterRole command, CancellationToken cancellationToken)
+    public async Task<Result<Guid?>> Handle(RegisterRole command, CancellationToken cancellationToken)
     {
         var exist = await context.Entity<Domain.Entities.System.Role>()
             .AnyAsync(x => x.Name == command.Name,cancellationToken);
         if (!exist)
-            return null; 
+            Result<Guid?>.Failure("Role does not exist.");
         
         var role = new Domain.Entities.System.Role
         {
@@ -27,6 +28,6 @@ public class RegisterRoleHandler(AppDbContext context) : ICommandHandler<Registe
         context.Entity<Domain.Entities.System.Role>().Add(role);
         await context.SaveChangesAsync(cancellationToken);
         
-        return role.Id;
+        return Result<Guid?>.Success(role.Id);
     }
 }

@@ -1,16 +1,17 @@
-﻿using Cortex.Mediator.Queries;
+﻿using Application.Core;
+using Cortex.Mediator.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Features.Permission;
 
-public class PermissionList : IQuery<List<PermissionTreeViewDto>>
+public class PermissionList : IQuery<Result<List<PermissionTreeViewDto>>>
 {
 }
 
-public class PermissionListHandler(AppDbContext context) : IQueryHandler<PermissionList, List<PermissionTreeViewDto>>
+public class PermissionListHandler(AppDbContext context) : IQueryHandler<PermissionList, Result<List<PermissionTreeViewDto>>>
 {
-    public async Task<List<PermissionTreeViewDto>> Handle(PermissionList query, CancellationToken cancellationToken)
+    public async Task<Result<List<PermissionTreeViewDto>>> Handle(PermissionList query, CancellationToken cancellationToken)
     {
         var permissions = await context.Entity<Domain.Entities.System.Permission>()
             .AsNoTracking()
@@ -36,8 +37,9 @@ public class PermissionListHandler(AppDbContext context) : IQueryHandler<Permiss
                 parentRole.Child.Add(currentRole);
             }
         }
-        return permissions.Where(r => !context.Entity<Domain.Entities.System.Role>()
+        var result = permissions.Where(r => !context.Entity<Domain.Entities.System.Role>()
             .Any(x => x.Id == r.Id && x.ParentId != null)).ToList();
+        return Result<List<PermissionTreeViewDto>>.Success(result);
     }
 }
 

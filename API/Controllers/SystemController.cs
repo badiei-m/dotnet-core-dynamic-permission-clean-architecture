@@ -1,7 +1,7 @@
 ﻿using API.Authorization;
+using Application.Core;
 using Application.Features.Permission;
 using Application.Features.Role;
-using Cortex.Mediator;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -9,35 +9,30 @@ namespace API.Controllers;
 [ApiController]
 [MustHavePermission]
 [Route("api/[controller]/[action]")]
-public class SystemController(IMediator mediator) : ControllerBase
+public class SystemController : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<List<RoleTreeViewDto>>> GetRoles()
+    public async Task<IActionResult> GetRoles()
     {
-        var roleList = await mediator.SendQueryAsync<RoleList, List<RoleTreeViewDto>>(
-            new RoleList{});
-        return roleList;
+        var roleList = await Mediator
+            .SendQueryAsync<RoleList, Result<List<RoleTreeViewDto>>>(new RoleList{});
+        return HandleResult(roleList);
     }
     
     [HttpPost]
     [ParentAction("System", "GetRoles")]
-    public async Task<ActionResult<string>> RegisterRole([FromBody]RegisterRole request)
+    public async Task<IActionResult> RegisterRole([FromBody]RegisterRole request)
     {
-        var userId = await mediator.SendCommandAsync<RegisterRole, Guid?>(request);
-        if (userId == null)
-        {
-            return Unauthorized("Invalid credentials");
-        }
-        return Ok(userId);    
+        var userId = await Mediator.SendCommandAsync<RegisterRole, Result<Guid?>>(request);
+        return HandleResult(userId);
     }
-    
 
     [HttpGet]
     [ParentAction("System", "GetRoles")]
-    public async Task<ActionResult<List<PermissionTreeViewDto>>> GetPermissions()
+    public async Task<IActionResult> GetPermissions()
     {
-        var permissionList = await mediator.SendQueryAsync<PermissionList, List<PermissionTreeViewDto>>(
+        var permissionList = await Mediator.SendQueryAsync<PermissionList, Result<List<PermissionTreeViewDto>>>(
             new PermissionList{});
-        return permissionList;
+        return HandleResult(permissionList);
     }
 }
