@@ -11,7 +11,6 @@ public class GetCurrentUser : IQuery<Result<UserDto>>
 {
     public string UserId { get; set; }
 }
-
 public class GetCurrentUserHandler(AppDbContext context,ITokenService tokenService) : IQueryHandler<GetCurrentUser, Result<UserDto>>
 {
     public async Task<Result<UserDto>> Handle(GetCurrentUser query, CancellationToken cancellationToken)

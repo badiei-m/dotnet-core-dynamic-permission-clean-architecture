@@ -49,7 +49,7 @@ public class RegisterUserHandler(AppDbContext context,ITokenService tokenService
         context.Entity<Domain.Entities.System.User>().Add(user);
         await context.SaveChangesAsync(cancellationToken);
 
-        var commonRole = await context.Entity<Role>()
+        var commonRole = await context.Entity<Domain.Entities.System.Role>()
             .FirstOrDefaultAsync(x => x.Name == "Common", cancellationToken: cancellationToken);
 
         if (commonRole != null)

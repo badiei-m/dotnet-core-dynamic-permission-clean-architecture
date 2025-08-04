@@ -92,7 +92,7 @@ public class DatabaseSeeder(
 
         return roleId;
     }
-
+    
     private async Task SeedCommonUserAsync(Guid roleId)
     {
         const string username = "common";
@@ -124,6 +124,7 @@ public class DatabaseSeeder(
             await context.SaveChangesAsync();
         }
     }
+    
     private async Task SeedAdminUserAsync()
     {
         const string adminUsername = "admin";
@@ -160,7 +161,7 @@ public class DatabaseSeeder(
             }
         }
     }
-
+    
     private async Task AssignPermissionsToAdminRoleAsync()
     {
         var adminRole = context.Entity<Role>().FirstOrDefault(r => r.Name == "Admin");

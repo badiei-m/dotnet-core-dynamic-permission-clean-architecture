@@ -1,5 +1,6 @@
-﻿using API.Services;
-using Application.Features.Auth.Role;
+﻿using API.Interfaces;
+using API.Services;
+using Application.Features.System.Role;
 using Application.Interfaces;
 using Cortex.Mediator.DependencyInjection;
 using InfraStructure.Repositories;
@@ -38,12 +39,14 @@ public static class ApplicationServiceExtensions
         );
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
+        services.AddHttpContextAccessor();
         services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IPermissionAuthorizationService, PermissionAuthorizationService>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IDatabaseSeeder, DatabaseSeeder>();
         services.AddScoped<IPermissionScanner, PermissionScanner>();
-        services.AddScoped<UserService>();
+        services.AddScoped<ITokenService, JWTTokenService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddMemoryCache();
         return services;
     }

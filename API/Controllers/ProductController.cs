@@ -10,7 +10,6 @@ namespace API.Controllers
     public class ProductController(IProductService service) : ControllerBase
     {
         [HttpGet]
-        
         public IActionResult Get() => Ok(service.GetAll());
     }
 

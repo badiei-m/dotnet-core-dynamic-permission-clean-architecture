@@ -1,5 +1,5 @@
 ﻿using API.Authorization;
-using API.Services;
+using API.Interfaces;
 using Application.Core;
 using Application.DTOs;
 using Application.Features.System.User;
@@ -11,7 +11,7 @@ namespace API.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]/[action]")]
-public class AuthController(UserService userService) :
+public class AuthController(ICurrentUserService userService) :
     BaseApiController
 {
     [HttpPost,AllowAnonymous]
@@ -31,7 +31,8 @@ public class AuthController(UserService userService) :
     [HttpGet,MustHavePermission]
     public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var userId = userService.GetCurrentUserId();
+        
+        var userId = userService.UserId;
         var user = await Mediator.SendQueryAsync<GetCurrentUser, Result<UserDto>>(new GetCurrentUser{UserId = userId});
         return HandleResult(user);
     }
