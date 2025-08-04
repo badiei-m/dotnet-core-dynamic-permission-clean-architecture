@@ -3,7 +3,7 @@ using Cortex.Mediator.Commands;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
-namespace Application.Features.Auth.Role;
+namespace Application.Features.System.Role;
 
 public class RegisterRole : ICommand<Result<Guid?>>
 {
